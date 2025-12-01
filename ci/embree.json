@@ -1,37 +1,41 @@
 [
   {
-    "extract_skip": ["bin/*", "doc/*"],
-    "name": "embree2",
-    "platform": "linux",
-    "sha256": "2c4bdacd8f3c3480991b99e85b8f584975ac181373a75f3e9675bf7efae501fe",
-    "strip_components": 1,
-    "target": "../embree2",
-    "url": "https://github.com/embree/embree/releases/download/v2.17.7/embree-2.17.7.x86_64.linux.tar.gz"
-  },
-  {
-    "extract_skip": ["bin/*", "doc/*"],
-    "name": "embree2",
-    "platform": "mac",
-    "sha256": "48a2e81d6ccc8782c37f811afe2290969b288ee7264fdf5273eac349921c05df",
-    "strip_components": 1,
-    "target": "../embree2",
-    "url": "https://github.com/embree/embree/releases/download/v2.17.7/embree-2.17.7.x86_64.macosx.tar.gz"
-  },
-  {
-    "name": "embree2",
-    "platform": "windows",
-    "sha256": "6fb7c828eef6cfe7186a5c002b52157a0d67471cf2c3072c3dced7d480071907",
-    "target": "../embree2",
-    "strip_components": 1,
-    "url": "https://github.com/embree/embree/releases/download/v2.17.7/embree-2.17.7.x64.windows.zip"
-  },
-  {
-    "extract_skip": ["bin/*", "doc/*"],
     "name": "embree4",
     "platform": "linux",
-    "sha256": "524842e2f141dca0db584c33a0821176373e7058f3ec2201bfb19d9e9a1b80b9",
-    "strip_components": 1,
+    "arch": "x86_64",
+    "sha256": "cb3d4402537fc9165c76c3316b8953dcfea523cd1eaf588e2de7639864ee3c57",
+    "strip_components": 0,
     "target": "../embree4",
-    "url": "https://github.com/embree/embree/releases/download/v4.0.0/embree-4.0.0.x86_64.linux.tar.gz"
+    "extract_skip": ["bin/*"],
+    "url": "https://github.com/embree/embree/releases/download/v4.4.0/embree-4.4.0.x86_64.linux.tar.gz"
+  },
+  {
+    "name": "embree4",
+    "platform": "mac",
+    "arch": "x86_64",
+    "sha256": "435b4ef3421eb75cf41a41438d44b760f4d86c24124e0b9a0ed9d85adff54b4d",
+    "strip_components": 0,
+    "target": "../embree4",
+    "extract_skip": ["bin/*"],
+    "url": "https://github.com/embree/embree/releases/download/v4.4.0/embree-4.4.0.x86_64.macosx.zip"
+  },
+  {
+    "name": "embree4",
+    "platform": "mac",
+    "arch": "arm64",
+    "sha256": "288a5bb1adc3d4cd0f86646008f4ac442b958b1635bf60cecff8f1b232e999a1",
+    "strip_components": 0,
+    "target": "../embree4",
+    "extract_skip": ["bin/*"],
+    "url": "https://github.com/embree/embree/releases/download/v4.4.0/embree-4.4.0.arm64.macosx.zip"
+  },
+  {
+    "name": "embree4",
+    "platform": "windows",
+    "arch": "x86_64",
+    "sha256": "d951e5e6bd295c54cdd66be9cdb44a4e8c42fb38a99f94f79305e48765fc3454",
+    "strip_components": 0,
+    "target": "../embree4",
+    "url": "https://github.com/embree/embree/releases/download/v4.4.0/embree-4.4.0.x64.windows.zip"
   }
 ]

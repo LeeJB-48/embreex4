@@ -15,29 +15,33 @@ def ext_modules():
     """Generate a list of extension modules for embreex."""
     if os.name == "nt":
         # embree search locations on windows
-        includes = [
+        include_dirs = [
             get_include(),
-            "c:/Program Files/Intel/Embree2/include",
-            os.path.join(_cwd, "embree2", "include"),
+            "c:/Program Files/Intel/Embree4/include",
+            os.path.join(_cwd, "embree4", "include"),
         ]
-        libraries = [
-            "c:/Program Files/Intel/Embree2/lib",
-            os.path.join(_cwd, "embree2", "lib"),
+        library_dirs = [
+            "c:/Program Files/Intel/Embree4/lib",
+            os.path.join(_cwd, "embree4", "lib"),
         ]
     else:
         # embree search locations on posix
-        includes = [
+        include_dirs = [
             get_include(),
-            "/opt/local/include",
-            os.path.join(_cwd, "embree2", "include"),
+            os.path.join(_cwd, "embree4", "include"),
         ]
-        libraries = ["/opt/local/lib", os.path.join(_cwd, "embree2", "lib")]
+        library_dirs = [os.path.join(_cwd, "embree4", "lib")]
 
-    ext_modules = cythonize("embreex/*.pyx", include_path=includes, language_level=2)
+    pyx_modules = [
+        os.path.join("embreex", name)
+        for name in ("rtcore.pyx", "rtcore_scene.pyx", "mesh_construction.pyx", "triangles.pyx")
+    ]
+    include_path = include_dirs + [os.path.join(_cwd, "embreex")]
+    ext_modules = cythonize(pyx_modules, include_path=include_path, language_level=3)
     for ext in ext_modules:
-        ext.include_dirs = includes
-        ext.library_dirs = libraries
-        ext.libraries = ["embree"]
+        ext.include_dirs = include_dirs
+        ext.library_dirs = library_dirs
+        ext.libraries = ["embree4"]
 
     return ext_modules
 

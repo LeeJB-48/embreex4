@@ -9,6 +9,8 @@ The goal is to meet the upstream `trimesh[easy]` preferences for dependencies,
 which are: "`easy` requirements should install without compiling anything on
 Windows/Linux/Intel Mac for Python 3.6+ and have minimal dependencies."
 
+This fork now targets Embree 4.4.0 (including Apple Silicon binaries).
+
 
 
 ## Install
