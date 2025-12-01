@@ -10,7 +10,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "embreex4"
-version = "4.4.0"
+version = "4.4.0.post1"
 requires-python = ">=3.8"
 
 dependencies = ["numpy"]
@@ -19,7 +19,7 @@ readme = {file = "README.md", content-type = "text/markdown"}
 license = {file = "LICENSE"}
 
 [project.urls]
-Source = "https://github.com/trimesh/embreex"
+Source = "https://github.com/LeeJB-48/embreex4"
 
 [tool.setuptools]
 zip-safe = false
