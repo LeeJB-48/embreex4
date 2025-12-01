@@ -9,9 +9,10 @@ import json
 import tarfile
 import logging
 import argparse
+import shutil
 from io import BytesIO
 from fnmatch import fnmatch
-from platform import system
+from platform import system, machine
 from typing import Optional
 from zipfile import ZipFile
 
@@ -114,6 +115,7 @@ def handle_fetch(
 
     if os.path.exists(target):
         log.debug(f"`{target}` exists, skipping")
+        repair_text_symlinks(target)
         return
 
     # get the raw bytes
@@ -175,6 +177,8 @@ def handle_fetch(
             # python os.chmod takes an octal value
             os.chmod(path, int(str(chmod), base=8))
 
+    repair_text_symlinks(target)
+
 
 def load_config(path: Optional[str] = None) -> list:
     """Load a config file for embree download locations."""
@@ -185,18 +189,79 @@ def load_config(path: Optional[str] = None) -> list:
         return json.load(f)
 
 
-def is_current_platform(platform: str) -> bool:
+def _normalize_arch(value: str) -> str:
+    """Normalize platform.machine outputs to config arch values."""
+    value = value.lower()
+    if value in ("amd64", "x86_64", "x64"):
+        return "x86_64"
+    if value in ("arm64", "aarch64"):
+        return "arm64"
+    return value
+
+
+def is_current_platform(platform: str, arch: Optional[str] = None) -> bool:
     """Check to see if a string platform identifier matches the current platform."""
-    # 'linux', 'darwin', 'windows'
     current = system().lower().strip()
     if current.startswith("dar"):
-        return platform.startswith("dar") or platform.startswith("mac")
+        match = platform.startswith("dar") or platform.startswith("mac")
     elif current.startswith("win"):
-        return platform.startswith("win")
+        match = platform.startswith("win")
     elif current.startswith("lin"):
-        return platform.startswith("lin")
+        match = platform.startswith("lin")
     else:
         raise ValueError(f"{current} ?= {platform}")
+
+    if not match:
+        return False
+
+    if arch is None:
+        return True
+
+    return _normalize_arch(machine()) == _normalize_arch(arch)
+
+
+def repair_text_symlinks(target_root: str) -> None:
+    """Some embree archives store symlinks as text files; repair them."""
+    lib_dir = os.path.join(target_root, "lib")
+    if not os.path.isdir(lib_dir):
+        return
+
+    for name in os.listdir(lib_dir):
+        path = os.path.join(lib_dir, name)
+        if not os.path.isfile(path):
+            continue
+
+        try:
+            size = os.path.getsize(path)
+        except OSError:
+            continue
+
+        # heuristic: tiny placeholder files typically contain symlink targets
+        if size == 0 or size > 64:
+            continue
+
+        try:
+            with open(path, "r") as f:
+                target = f.read().strip()
+        except Exception:
+            continue
+
+        if len(target) == 0:
+            continue
+
+        target_path = os.path.join(lib_dir, target)
+        if not os.path.exists(target_path):
+            continue
+
+        try:
+            os.remove(path)
+        except OSError:
+            continue
+
+        try:
+            os.symlink(target, path)
+        except OSError:
+            shutil.copy2(target_path, path)
 
 
 if __name__ == "__main__":
@@ -218,8 +283,9 @@ if __name__ == "__main__":
         select = set(" ".join(args.install).replace(",", " ").split())
 
     for option in config:
-        if option["name"] in select and is_current_platform(option["platform"]):
+        if option["name"] in select and is_current_platform(option["platform"], option.get("arch")):
             subset = option.copy()
             subset.pop("name")
             subset.pop("platform")
+            subset.pop("arch", None)
             handle_fetch(**subset)
